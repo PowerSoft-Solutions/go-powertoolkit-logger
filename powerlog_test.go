@@ -1,4 +1,4 @@
-package powerlog
+package powerlogger
 
 import (
 	"fmt"
@@ -7,14 +7,6 @@ import (
 	"testing"
 	"time"
 )
-
-func Test_Init_ShouldSetLogFlags(t *testing.T) {
-	log.SetFlags(0) // Reset flags to default
-	Init()
-	if log.Flags() != (log.LstdFlags | log.Lshortfile) {
-		t.Errorf("Init() log flags = %v, want %v", log.Flags(), log.LstdFlags|log.Lshortfile)
-	}
-}
 
 func Test_Init_ShouldInitializePowerLogger(t *testing.T) {
 	logger := Init()

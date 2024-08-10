@@ -1,4 +1,4 @@
-package powerlog
+package powerlogger
 
 import (
 	"fmt"
@@ -18,7 +18,6 @@ type PowerLogger struct {
 var withFile bool
 
 func Init() *PowerLogger {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	return &PowerLogger{
 		debug: log.New(os.Stdout, "DEBUG: ", log.LstdFlags),
 		info:  log.New(os.Stdout, "INFO: ", log.LstdFlags),
