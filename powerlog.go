@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type powerLogger struct {
+type PowerLogger struct {
 	debug *log.Logger
 	info  *log.Logger
 	warn  *log.Logger
@@ -17,13 +17,9 @@ type powerLogger struct {
 
 var withFile bool
 
-func Init() {
+func Init() *PowerLogger {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	newPowerLogger()
-}
-
-func newPowerLogger() *powerLogger {
-	return &powerLogger{
+	return &PowerLogger{
 		debug: log.New(os.Stdout, "DEBUG: ", log.LstdFlags),
 		info:  log.New(os.Stdout, "INFO: ", log.LstdFlags),
 		warn:  log.New(os.Stdout, "WARN: ", log.LstdFlags),
@@ -31,35 +27,35 @@ func newPowerLogger() *powerLogger {
 	}
 }
 
-func (l *powerLogger) Debug(v ...any) {
+func (l *PowerLogger) Debug(v ...any) {
 	if withFile {
 		l.debug.Println(v...)
 	}
 	log.Printf("DEBUG: %s", v)
 }
 
-func (l *powerLogger) Info(v ...any) {
+func (l *PowerLogger) Info(v ...any) {
 	if withFile {
 		l.info.Println(v...)
 	}
 	log.Printf("INFO: %s", v)
 }
 
-func (l *powerLogger) Warn(v ...any) {
+func (l *PowerLogger) Warn(v ...any) {
 	if withFile {
 		l.warn.Println(v...)
 	}
 	log.Printf("WARN: %s", v)
 }
 
-func (l *powerLogger) Error(v ...any) {
+func (l *PowerLogger) Error(v ...any) {
 	if withFile {
 		l.error.Println(v...)
 	}
 	log.Printf("ERROR: %s", v)
 }
 
-func (l *powerLogger) Panic(v ...any) {
+func (l *PowerLogger) Panic(v ...any) {
 	if withFile {
 		l.error.Println(v...)
 	}
@@ -68,6 +64,10 @@ func (l *powerLogger) Panic(v ...any) {
 }
 
 func SetLoggerFile(logName, logDir string) error {
+	if logName == "" {
+		return fmt.Errorf("log name is required")
+	}
+
 	logFileName := fmt.Sprintf("%s_%s.log", time.Now().Local().Format("2006-01-02"), logName)
 	logFile, err := os.OpenFile(filepath.Join(logDir, logFileName), os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
 	if err != nil {

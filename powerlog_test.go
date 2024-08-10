@@ -17,42 +17,36 @@ func Test_Init_ShouldSetLogFlags(t *testing.T) {
 }
 
 func Test_Init_ShouldInitializePowerLogger(t *testing.T) {
-	logger := newPowerLogger()
+	logger := Init()
 	if logger == nil {
-		t.Errorf("newPowerLogger() = %v, want non-nil", logger)
+		t.Errorf("Init() = %v, want non-nil", logger)
 	}
 }
 
-func Test_NewPowerLog_ShouldReturnNonNil(t *testing.T) {
-	if got := newPowerLogger(); got == nil {
-		t.Errorf("newPowerLogger() = %v, want non-nil", got)
-	}
-}
-
-func Test_NewPowerLog_ShouldInitializeLoggers(t *testing.T) {
-	got := newPowerLogger()
+func Test_Init_ShouldInitializeLoggers(t *testing.T) {
+	got := Init()
 	if got.debug == nil || got.info == nil || got.warn == nil || got.error == nil {
-		t.Errorf("newPowerLogger() loggers not initialized properly")
+		t.Errorf("Init() loggers not initialized properly")
 	}
 }
 
-func Test_NewPowerLog_ShouldSetCorrectLoggerPrefixes(t *testing.T) {
-	got := newPowerLogger()
+func Test_Init_ShouldSetCorrectLoggerPrefixes(t *testing.T) {
+	got := Init()
 	if got.debug.Prefix() != "DEBUG: " {
-		t.Errorf("newPowerLogger() debug logger prefix = %v, want %v", got.debug.Prefix(), "DEBUG: ")
+		t.Errorf("Init() debug logger prefix = %v, want %v", got.debug.Prefix(), "DEBUG: ")
 	}
 	if got.info.Prefix() != "INFO: " {
-		t.Errorf("newPowerLogger() info logger prefix = %v, want %v", got.info.Prefix(), "INFO: ")
+		t.Errorf("Init() info logger prefix = %v, want %v", got.info.Prefix(), "INFO: ")
 	}
 	if got.warn.Prefix() != "WARN: " {
-		t.Errorf("newPowerLogger() warn logger prefix = %v, want %v", got.warn.Prefix(), "WARN: ")
+		t.Errorf("Init() warn logger prefix = %v, want %v", got.warn.Prefix(), "WARN: ")
 	}
 	if got.error.Prefix() != "ERROR: " {
-		t.Errorf("newPowerLogger() error logger prefix = %v, want %v", got.error.Prefix(), "ERROR: ")
+		t.Errorf("Init() error logger prefix = %v, want %v", got.error.Prefix(), "ERROR: ")
 	}
 }
 
-func Test_powerLog_Debug(t *testing.T) {
+func Test_powerLogger_Debug(t *testing.T) {
 	type fields struct {
 		withFile bool
 	}
@@ -69,7 +63,7 @@ func Test_powerLog_Debug(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := &powerLogger{
+			l := &PowerLogger{
 				debug: log.New(os.Stdout, "DEBUG: ", log.LstdFlags),
 			}
 			withFile = tt.fields.withFile
@@ -78,7 +72,7 @@ func Test_powerLog_Debug(t *testing.T) {
 	}
 }
 
-func Test_powerLog_Info(t *testing.T) {
+func Test_powerLogger_Info(t *testing.T) {
 	type fields struct {
 		withFile bool
 	}
@@ -95,7 +89,7 @@ func Test_powerLog_Info(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := &powerLogger{
+			l := &PowerLogger{
 				info: log.New(os.Stdout, "INFO: ", log.LstdFlags),
 			}
 			l.Info(tt.args.v...)
@@ -103,7 +97,7 @@ func Test_powerLog_Info(t *testing.T) {
 	}
 }
 
-func Test_powerLog_Warn(t *testing.T) {
+func Test_powerLogger_Warn(t *testing.T) {
 	type fields struct {
 		withFile bool
 	}
@@ -120,7 +114,7 @@ func Test_powerLog_Warn(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := &powerLogger{
+			l := &PowerLogger{
 				warn: log.New(os.Stdout, "WARN: ", log.LstdFlags),
 			}
 			l.Warn(tt.args.v...)
@@ -128,7 +122,7 @@ func Test_powerLog_Warn(t *testing.T) {
 	}
 }
 
-func Test_powerLog_Error(t *testing.T) {
+func Test_powerLogger_Error(t *testing.T) {
 	type fields struct {
 		withFile bool
 	}
@@ -145,7 +139,7 @@ func Test_powerLog_Error(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := &powerLogger{
+			l := &PowerLogger{
 				error: log.New(os.Stderr, "ERROR: ", log.LstdFlags),
 			}
 			l.Error(tt.args.v...)
@@ -153,7 +147,7 @@ func Test_powerLog_Error(t *testing.T) {
 	}
 }
 
-func Test_powerLog_Panic(t *testing.T) {
+func Test_powerLogger_Panic(t *testing.T) {
 	type fields struct {
 		withFile bool
 	}
@@ -170,7 +164,7 @@ func Test_powerLog_Panic(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := &powerLogger{
+			l := &PowerLogger{
 				error: log.New(os.Stderr, "ERROR: ", log.LstdFlags),
 			}
 			defer func() {
@@ -199,6 +193,7 @@ func TestSetLoggerFile(t *testing.T) {
 	}{
 		{"Should be Success", args{logName, "/tmp"}, false, ""},
 		{"Should be Invalid Path", args{logName, "/invalid/tmp"}, true, fmt.Sprintf("error creating log file: open %s: no such file or directory", "/invalid/tmp/"+logFileName)},
+		{"Should be Invalid Name", args{"", "/invalid/tmp"}, true, "log name is required"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
