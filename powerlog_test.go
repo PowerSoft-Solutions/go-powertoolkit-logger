@@ -54,10 +54,7 @@ func Test_NewPowerLog_ShouldSetCorrectLoggerPrefixes(t *testing.T) {
 
 func Test_powerLog_Debug(t *testing.T) {
 	type fields struct {
-		debug *log.Logger
-		info  *log.Logger
-		warn  *log.Logger
-		error *log.Logger
+		withFile bool
 	}
 	type args struct {
 		v []any
@@ -67,57 +64,23 @@ func Test_powerLog_Debug(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"Should be Success Debug Log", fields{debug: log.New(os.Stdout, "DEBUG: ", log.LstdFlags)}, args{v: []any{"test"}}},
+		{"Should be Success Debug Log With File False", fields{withFile: false}, args{v: []any{"test"}}},
+		{"Should be Success Debug Log With File False", fields{withFile: true}, args{v: []any{"test"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := &powerLogger{
-				debug: tt.fields.debug,
-				info:  tt.fields.info,
-				warn:  tt.fields.warn,
-				error: tt.fields.error,
+				debug: log.New(os.Stdout, "DEBUG: ", log.LstdFlags),
 			}
+			withFile = tt.fields.withFile
 			l.Debug(tt.args.v...)
-		})
-	}
-}
-
-func Test_powerLog_Error(t *testing.T) {
-	type fields struct {
-		debug *log.Logger
-		info  *log.Logger
-		warn  *log.Logger
-		error *log.Logger
-	}
-	type args struct {
-		v []any
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			l := &powerLogger{
-				debug: tt.fields.debug,
-				info:  tt.fields.info,
-				warn:  tt.fields.warn,
-				error: tt.fields.error,
-			}
-			l.Error(tt.args.v...)
 		})
 	}
 }
 
 func Test_powerLog_Info(t *testing.T) {
 	type fields struct {
-		debug *log.Logger
-		info  *log.Logger
-		warn  *log.Logger
-		error *log.Logger
+		withFile bool
 	}
 	type args struct {
 		v []any
@@ -127,27 +90,22 @@ func Test_powerLog_Info(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+		{"Should be Success Info Log With File False", fields{withFile: false}, args{v: []any{"test"}}},
+		{"Should be Success Info Log With File False", fields{withFile: true}, args{v: []any{"test"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := &powerLogger{
-				debug: tt.fields.debug,
-				info:  tt.fields.info,
-				warn:  tt.fields.warn,
-				error: tt.fields.error,
+				info: log.New(os.Stdout, "INFO: ", log.LstdFlags),
 			}
 			l.Info(tt.args.v...)
 		})
 	}
 }
 
-func Test_powerLog_Panic(t *testing.T) {
+func Test_powerLog_Warn(t *testing.T) {
 	type fields struct {
-		debug *log.Logger
-		info  *log.Logger
-		warn  *log.Logger
-		error *log.Logger
+		withFile bool
 	}
 	type args struct {
 		v []any
@@ -157,27 +115,22 @@ func Test_powerLog_Panic(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+		{"Should be Success Warning Log With File False", fields{withFile: false}, args{v: []any{"test"}}},
+		{"Should be Success Warning Log With File False", fields{withFile: true}, args{v: []any{"test"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := &powerLogger{
-				debug: tt.fields.debug,
-				info:  tt.fields.info,
-				warn:  tt.fields.warn,
-				error: tt.fields.error,
+				warn: log.New(os.Stdout, "WARN: ", log.LstdFlags),
 			}
-			l.Panic(tt.args.v...)
+			l.Warn(tt.args.v...)
 		})
 	}
 }
 
-func Test_powerLog_Warn(t *testing.T) {
+func Test_powerLog_Error(t *testing.T) {
 	type fields struct {
-		debug *log.Logger
-		info  *log.Logger
-		warn  *log.Logger
-		error *log.Logger
+		withFile bool
 	}
 	type args struct {
 		v []any
@@ -187,17 +140,45 @@ func Test_powerLog_Warn(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+		{"Should be Success Error Log With File False", fields{withFile: false}, args{v: []any{"test"}}},
+		{"Should be Success Error Log With File False", fields{withFile: true}, args{v: []any{"test"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := &powerLogger{
-				debug: tt.fields.debug,
-				info:  tt.fields.info,
-				warn:  tt.fields.warn,
-				error: tt.fields.error,
+				error: log.New(os.Stderr, "ERROR: ", log.LstdFlags),
 			}
-			l.Warn(tt.args.v...)
+			l.Error(tt.args.v...)
+		})
+	}
+}
+
+func Test_powerLog_Panic(t *testing.T) {
+	type fields struct {
+		withFile bool
+	}
+	type args struct {
+		v []any
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{"Should be Success Panic Log With File False", fields{withFile: false}, args{v: []any{"test"}}},
+		{"Should be Success Panic Log With File False", fields{withFile: true}, args{v: []any{"test"}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := &powerLogger{
+				error: log.New(os.Stderr, "ERROR: ", log.LstdFlags),
+			}
+			defer func() {
+				if r := recover(); r == nil {
+					t.Errorf("Panic() did not panic")
+				}
+			}()
+			l.Panic(tt.args.v...)
 		})
 	}
 }
