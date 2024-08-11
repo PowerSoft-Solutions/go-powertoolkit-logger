@@ -51,13 +51,3 @@ _cgo_export.*
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Deploy Packages
-*.zip
-
-# Environment configs
-.env.*
-.env_*
-
-# Logs
-*.log

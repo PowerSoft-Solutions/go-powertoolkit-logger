@@ -62,7 +62,7 @@ func (l *PowerLogger) Panic(v ...any) {
 	panic(fmt.Sprint(v...))
 }
 
-func SetLoggerFile(logName, logDir string) error {
+func (l *PowerLogger) SetLoggerFile(logName, logDir string) error {
 	if logName == "" {
 		return fmt.Errorf("log name is required")
 	}

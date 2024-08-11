@@ -170,6 +170,7 @@ func Test_powerLogger_Panic(t *testing.T) {
 }
 
 func TestSetLoggerFile(t *testing.T) {
+	pl := Init()
 	type args struct {
 		logName string
 		logDir  string
@@ -189,7 +190,7 @@ func TestSetLoggerFile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := SetLoggerFile(tt.args.logName, tt.args.logDir); err != nil && tt.wantErrorMessage != err.Error() {
+			if err := pl.SetLoggerFile(tt.args.logName, tt.args.logDir); err != nil && tt.wantErrorMessage != err.Error() {
 				t.Errorf("SetLoggerFile() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
