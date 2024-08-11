@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+type IPowerLogger interface {
+	Debug(v ...any)
+	Info(v ...any)
+	Warn(v ...any)
+	Error(v ...any)
+	Panic(v ...any)
+	SetLoggerFile(logName, logDir string) error
+}
+
 type PowerLogger struct {
 	debug *log.Logger
 	info  *log.Logger
